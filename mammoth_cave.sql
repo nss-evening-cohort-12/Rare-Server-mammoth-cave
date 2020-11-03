@@ -40,7 +40,7 @@ SELECT
   p.category_id,
   p.subject,
   p.content,
-  c.name category_name,
+  c.name category_name
 FROM posts p
 JOIN categories c
   ON p.category_id = c.id
@@ -57,6 +57,14 @@ CREATE TABLE comments (
 INSERT INTO comments VALUES (null, 1, 1, 11022020, 'Comment Subject', 'Comment Content')
 INSERT INTO comments VALUES (null, 2, 2, 11022020, 'Comment Subject 2', 'Comment Content 2')
 
+        SELECT
+            p.id,
+            p.user_name,
+            p.creation_date,
+            p.category_id,
+            p.subject,
+            p.content
+        FROM posts p
 
 
 
