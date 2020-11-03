@@ -1,3 +1,7 @@
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import json
+from users import login_check
+
 class HandleRequests(BaseHTTPRequestHandler):
 
     # Here's a class function
@@ -43,10 +47,18 @@ class HandleRequests(BaseHTTPRequestHandler):
         # Set response code to 'Created'
         self._set_headers(201)
 
+
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
-        response = f"received post request:<br>{post_body}"
-        self.wfile.write(response.encode())
+        post_body = json.loads(post_body)
+        
+        (resource, _) = self.parse_url(self.path)
+
+        if resource == "login":
+            returned_item = login_check(post_body)
+
+
+        self.wfile.write(returned_item.encode())
 
 
     # Here's a method on the class that overrides the parent's method.
@@ -54,6 +66,35 @@ class HandleRequests(BaseHTTPRequestHandler):
     def do_PUT(self):
         self.do_POST()
 
+
+    def parse_url(self, path):
+        path_params = path.split("/")
+        resource = path_params[1]
+
+        # Check if there is a query string parameter
+        if "?" in resource:
+            # GIVEN: /customers?email=jenna@solis.com
+
+            param = resource.split("?")[1]  # email=jenna@solis.com
+            resource = resource.split("?")[0]  # 'customers'
+            pair = param.split("=")  # [ 'email', 'jenna@solis.com' ]
+            key = pair[0]  # 'email'
+            value = pair[1]  # 'jenna@solis.com'
+
+            return ( resource, key, value )
+
+        # No query string parameter
+        else:
+            id = None
+
+            try:
+                id = int(path_params[2])
+            except IndexError:
+                pass  # No route parameter exists: /animals
+            except ValueError:
+                pass  # Request had trailing slash: /animals/
+
+            return (resource, id)    
 
 # This function is not inside the class. It is the starting
 # point of this application.

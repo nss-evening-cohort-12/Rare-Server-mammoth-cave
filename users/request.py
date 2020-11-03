@@ -3,6 +3,7 @@ import json
 import sqlite3
 
 def login_check(creds):
+     print(creds)
      with sqlite3.connect("./mammoth_cave.db") as conn:
         db_cursor = conn.cursor()
     
@@ -15,7 +16,7 @@ def login_check(creds):
         u.password
         from users u
         where u.email=? AND u.password = ?
-        """, (creds["username"], creds["password"], ))
+        """, (creds['username'], creds['password'], ))
 
         dataset = db_cursor.fetchone()
 
