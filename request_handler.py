@@ -1,9 +1,13 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
+
 from users import login_check
+from categories import get_all_categories
 
 class HandleRequests(BaseHTTPRequestHandler):
-
+	def parse_url(self, path):
+		path_params = path.split("/")
+		resource = path_params
     # Here's a class function
     def _set_headers(self, status):
         self.send_response(status)
@@ -11,29 +15,18 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
 
-    # Another method! This supports requests with the OPTIONS verb.
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
-        self.send_header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept')
-        self.end_headers()
-
-    # Here's a method on the class that overrides the parent's method.
-    # It handles any GET request.
     def do_GET(self):
         # Set the response code to 'Ok'
         self._set_headers(200)
 
         # Your new console.log() that outputs to the terminal
-        print(self.path)
+        response = {}
+
+        parsed = self.parse_url(self.path)
 
         # It's an if..else statement
-        if self.path == "/animals":
-            response = [
-                { "id": 1, "name": "Snickers", "species": "Dog" },
-                { "id": 2, "name": "Lenny", "species": "Cat" }
-            ]
+        if len(parsed) == 2:
+            ( resource, id )
 
         else:
             response = []
