@@ -1,6 +1,6 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from users import login_check
+from users import login_check, add_user
 from posts import get_all_posts, get_single_post, create_post, update_post, delete_post
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -44,7 +44,9 @@ class HandleRequests(BaseHTTPRequestHandler):
         if resource == "login":
             returned_item = login_check(post_body)
             self.wfile.write(returned_item.encode())
-
+        elif resource == "register":
+            returned_item = add_user(post_body)
+            self.wfile.write(returned_item.encode())
         elif resource == "posts":
             new_post = None
             new_post = create_post(post_body)
