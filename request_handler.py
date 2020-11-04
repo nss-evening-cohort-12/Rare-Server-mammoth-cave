@@ -1,103 +1,119 @@
-from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from users import login_check
+from posts import get_all_posts, get_single_post, create_post, update_post, delete_post
 
 class HandleRequests(BaseHTTPRequestHandler):
-
-    # Here's a class function
     def _set_headers(self, status):
         self.send_response(status)
         self.send_header('Content-type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
 
-    # Another method! This supports requests with the OPTIONS verb.
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
-        self.send_header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept')
-        self.end_headers()
-
-    # Here's a method on the class that overrides the parent's method.
-    # It handles any GET request.
     def do_GET(self):
-        # Set the response code to 'Ok'
         self._set_headers(200)
 
-        # Your new console.log() that outputs to the terminal
-        print(self.path)
+        response = {}
 
-        # It's an if..else statement
-        if self.path == "/animals":
-            response = [
-                { "id": 1, "name": "Snickers", "species": "Dog" },
-                { "id": 2, "name": "Lenny", "species": "Cat" }
-            ]
+        parsed = self.parse_url(self.path)
 
-        else:
-            response = []
+        if len(parsed) == 2:
+            ( resource, id ) = parsed
 
-        # This weird code sends a response back to the client
-        self.wfile.write(f"{response}".encode())
+            if resource == "posts":
+                if id is not None:
+                    response = f"{get_single_post(id)}"
+                else:
+                    response = f"{get_all_posts()}"
 
-    # Here's a method on the class that overrides the parent's method.
-    # It handles any POST request.
+        elif len(parsed) == 3:
+            (resource, key, value) = parsed
+            pass
+
+        self.wfile.write(response.encode())
+
     def do_POST(self):
-        # Set response code to 'Created'
         self._set_headers(201)
-
-
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
+        
         post_body = json.loads(post_body)
         
         (resource, _) = self.parse_url(self.path)
 
         if resource == "login":
             returned_item = login_check(post_body)
+            self.wfile.write(returned_item.encode())
 
+        elif resource == "posts":
+            new_post = None
+            new_post = create_post(post_body)
+            self.wfile.write(f"{new_post}".encode())
 
-        self.wfile.write(returned_item.encode())
+    def do_DELETE(self):
+        self._set_headers(204)
 
+        (resource, id) = self.parse_url(self.path)
 
-    # Here's a method on the class that overrides the parent's method.
-    # It handles any PUT request.
+        if resource == 'posts':
+                delete_post(id)
+
+        self.wfile.write("".encode())
+
     def do_PUT(self):
-        self.do_POST()
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+        post_body = json.loads(post_body)
 
+        (resource, id) = self.parse_url(self.path)
+    
+        success = False
+
+        if resource == "posts":
+            success = update_post(id, post_body)
+        
+        if success:
+            self._set_headers(204)
+        else:
+            self._set_headers(404)
+
+        self.wfile.write("".encode())
+
+        
 
     def parse_url(self, path):
         path_params = path.split("/")
         resource = path_params[1]
 
-        # Check if there is a query string parameter
         if "?" in resource:
-            # GIVEN: /customers?email=jenna@solis.com
-
-            param = resource.split("?")[1]  # email=jenna@solis.com
-            resource = resource.split("?")[0]  # 'customers'
-            pair = param.split("=")  # [ 'email', 'jenna@solis.com' ]
-            key = pair[0]  # 'email'
-            value = pair[1]  # 'jenna@solis.com'
+            param = resource.split("?")[1]
+            resource = resource.split("?")[0]
+            pair = param.split("=")
+            key = pair[0]
+            value = pair[1]
 
             return ( resource, key, value )
 
-        # No query string parameter
         else:
             id = None
 
             try:
                 id = int(path_params[2])
             except IndexError:
-                pass  # No route parameter exists: /animals
+                pass
             except ValueError:
-                pass  # Request had trailing slash: /animals/
+                pass
 
-            return (resource, id)    
+            return (resource, id)   
 
-# This function is not inside the class. It is the starting
-# point of this application.
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+        self.send_header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept')
+        self.end_headers()
+ 
+
 def main():
     host = ''
     port = 8088
