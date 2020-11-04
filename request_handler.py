@@ -1,21 +1,10 @@
 import json
-<<<<<<< HEAD
-
-from users import login_check
-from categories import get_all_categories
-
-class HandleRequests(BaseHTTPRequestHandler):
-	def parse_url(self, path):
-		path_params = path.split("/")
-		resource = path_params
-    # Here's a class function
-=======
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from users import login_check
 from posts import get_all_posts, get_single_post, create_post, update_post, delete_post
+from categories import get_all_categories, get_single_category, create_category, delete_category, update_category
 
 class HandleRequests(BaseHTTPRequestHandler):
->>>>>>> main
     def _set_headers(self, status):
         self.send_response(status)
         self.send_header('Content-type', 'application/json')
@@ -25,20 +14,9 @@ class HandleRequests(BaseHTTPRequestHandler):
     def do_GET(self):
         self._set_headers(200)
 
-<<<<<<< HEAD
-        # Your new console.log() that outputs to the terminal
         response = {}
 
         parsed = self.parse_url(self.path)
-
-        # It's an if..else statement
-        if len(parsed) == 2:
-            ( resource, id )
-=======
-        response = {}
-
-        parsed = self.parse_url(self.path)
->>>>>>> main
 
         if len(parsed) == 2:
             ( resource, id ) = parsed
@@ -48,6 +26,11 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_single_post(id)}"
                 else:
                     response = f"{get_all_posts()}"
+            if resource == "categories":
+                if id is not None:
+                    response = f"{get_single_category(id)}"
+                else:
+                    response = f"{get_all_categories()}"
 
         elif len(parsed) == 3:
             (resource, key, value) = parsed
@@ -72,6 +55,11 @@ class HandleRequests(BaseHTTPRequestHandler):
             new_post = None
             new_post = create_post(post_body)
             self.wfile.write(f"{new_post}".encode())
+        
+        elif resource == "categories":
+            new_category = None
+            new_category = create_category(post_body)
+            self.wfile.write(f"{new_category}".encode())
 
     def do_DELETE(self):
         self._set_headers(204)
@@ -80,6 +68,8 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         if resource == 'posts':
                 delete_post(id)
+        elif resource == 'categories':
+                delete_category(id)
 
         self.wfile.write("".encode())
 
@@ -94,7 +84,8 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         if resource == "posts":
             success = update_post(id, post_body)
-        
+        elif resource == "categories":
+            success = update_category(id, post_body)
         if success:
             self._set_headers(204)
         else:
