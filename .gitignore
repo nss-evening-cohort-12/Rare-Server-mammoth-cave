@@ -144,5 +144,6 @@ dmypy.json
 .prof
 
 # End of https://www.toptal.com/developers/gitignore/api/python
-rare.db
+mammoth_cave.db
+mammoth_cave.sql
 .vscode
