@@ -6,3 +6,4 @@ class Post():
     self.category_id = category_id
     self.subject = subject
     self.content = content
+    self.user = None

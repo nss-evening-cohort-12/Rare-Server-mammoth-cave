@@ -1,7 +1,7 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from users import login_check, add_user
-from posts import get_all_posts, get_single_post, create_post, update_post, delete_post
+from posts import get_all_posts, get_post_by_id, get_posts_by_user, create_post, delete_post, update_post
 from categories import get_all_categories, get_single_category, create_category, delete_category, update_category
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -19,14 +19,14 @@ class HandleRequests(BaseHTTPRequestHandler):
         parsed = self.parse_url(self.path)
 
         if len(parsed) == 2:
-            ( resource, id ) = parsed
+            (resource, id) = parsed
 
             if resource == "posts":
                 if id is not None:
-                    response = f"{get_single_post(id)}"
+                    response = f"{get_post_by_id(id)}"
                 else:
                     response = f"{get_all_posts()}"
-            if resource == "categories":
+            elif resource == "categories":
                 if id is not None:
                     response = f"{get_single_category(id)}"
                 else:
@@ -34,7 +34,10 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         elif len(parsed) == 3:
             (resource, key, value) = parsed
-            pass
+            
+            if key == "user_id" and resource == "posts":
+                print("i made it")
+                response = get_posts_by_user(value)
 
         self.wfile.write(response.encode())
 
@@ -47,6 +50,8 @@ class HandleRequests(BaseHTTPRequestHandler):
         
         (resource, _) = self.parse_url(self.path)
 
+        response = None
+
         if resource == "login":
             returned_item = login_check(post_body)
             self.wfile.write(returned_item.encode())
@@ -54,14 +59,17 @@ class HandleRequests(BaseHTTPRequestHandler):
             returned_item = add_user(post_body)
             self.wfile.write(returned_item.encode())
         elif resource == "posts":
-            new_post = None
-            new_post = create_post(post_body)
-            self.wfile.write(f"{new_post}".encode())
-        
+            # new_post = None
+            # new_post = create_post(post_body)
+            # self.wfile.write(f"{new_post}".encode())
+            response = create_post(post_body)        
         elif resource == "categories":
             new_category = None
             new_category = create_category(post_body)
             self.wfile.write(f"{new_category}".encode())
+
+        self.wfile.write(f"{response}".encode())
+
 
     def do_DELETE(self):
         self._set_headers(204)
@@ -122,12 +130,12 @@ class HandleRequests(BaseHTTPRequestHandler):
 
             return (resource, id)   
 
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
-        self.send_header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept')
-        self.end_headers()
+def do_OPTIONS(self):
+    self.send_response(200)
+    self.send_header('Access-Control-Allow-Origin', '*')
+    self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+    self.send_header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept')
+    self.end_headers()
  
 
 def main():
