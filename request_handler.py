@@ -1,6 +1,6 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from users import login_check, add_user
+from users import login_check, add_user, get_all_users
 from posts import get_all_posts, get_single_post, create_post, update_post, delete_post
 from categories import get_all_categories, get_single_category, create_category, delete_category, update_category
 
@@ -31,7 +31,11 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_single_category(id)}"
                 else:
                     response = f"{get_all_categories()}"
-
+            elif resource == "users":
+                if id is not None:
+                    response = f"{get_all_users()}"
+                else:
+                    response = f"{get_all_users()}"
         elif len(parsed) == 3:
             (resource, key, value) = parsed
             pass
