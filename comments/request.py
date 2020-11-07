@@ -14,8 +14,12 @@ def get_comments_by_post_id(post_id):
             c.post_id,
             c.creation_date,
             c.subject,
-            c.content
+            c.content,
+            u.first_name fname,
+            u.last_name lname
             from comments c
+            join users u
+            on c.user_id = u.id
             where c.post_id = ?
             ORDER BY creation_date
           """, (int(post_id), ))
@@ -24,6 +28,7 @@ def get_comments_by_post_id(post_id):
         dataset = db_cursor.fetchall()
         for row in dataset:
             comment = Comment(row['id'], row['user_id'], row['post_id'], row['creation_date'], row['subject'], row['content'])
+            comment.user = { "first_name": row["fname"], "last_name": row['lname']}
             comments.append(comment.__dict__)
     return json.dumps(comments)
 

@@ -7,3 +7,4 @@ class User:
         self.email = email
         self.password = password
         self.activated = 1
+        self.user = {}

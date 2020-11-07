@@ -41,7 +41,6 @@ class HandleRequests(BaseHTTPRequestHandler):
             (resource, key, value) = parsed
             
             if key == "user_id" and resource == "posts":
-                print("i made it")
                 response = get_posts_by_user(value)
             elif key == "post_id" and resource == "comments":
                 print("comments by post_id")
@@ -67,9 +66,6 @@ class HandleRequests(BaseHTTPRequestHandler):
             returned_item = add_user(post_body)
             self.wfile.write(returned_item.encode())
         elif resource == "posts":
-            # new_post = None
-            # new_post = create_post(post_body)
-            # self.wfile.write(f"{new_post}".encode())
             response = create_post(post_body)
             self.wfile.write(f"{response}".encode())
         elif resource == "categories":
