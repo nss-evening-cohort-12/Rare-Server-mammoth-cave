@@ -66,10 +66,14 @@ def get_post_by_id(id):
             u.first_name,
             u.last_name,
             u.email,
-            u.password
+            u.password,
+            c.id,
+            c.name
         FROM posts p
         JOIN users u
             ON u.id = p.user_id
+        JOIN categories c
+            ON c.id = p.category_id
         WHERE p.id = ?
         """, ( id, ))
 
@@ -77,8 +81,11 @@ def get_post_by_id(id):
 
         post = Post(data['id'], data['user_id'], data['creation_date'], data['category_id'], data['subject'], data['content'])
         user = User(data['user_id'], data['first_name'], data['last_name'], data['email'], data['password'])
+        category = Category(data['category_id'], data['name'])
 
         post.user = user.__dict__
+
+        post.category = category.__dict__
 
         return json.dumps(post.__dict__)
 
@@ -110,7 +117,6 @@ def delete_post(id):
 def get_posts_by_user(user_id):
     with sqlite3.connect("./mammoth_cave.db") as conn:
         conn.row_factory = sqlite3.Row
-        print(user_id)
         db_cursor = conn.cursor()
 
         db_cursor.execute("""
@@ -125,10 +131,14 @@ def get_posts_by_user(user_id):
             u.first_name,
             u.last_name,
             u.email,
-            u.password
+            u.password,
+            c.id,
+            c.name
         FROM posts p
         JOIN users u
             ON u.id = p.user_id
+        JOIN categories c
+            ON c.id = p.category_id
         WHERE u.id = ?
         """, ( user_id, ))
 
@@ -138,8 +148,11 @@ def get_posts_by_user(user_id):
         for row in dataset:
             post = Post(row['id'], row['user_id'], row['creation_date'], row['category_id'], row['subject'], row['content'], )
             user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['password'], )
+            category = Category(row['category_id'], row['name'])
 
             post.user = user.__dict__
+
+            post.category = category.__dict__
 
             posts.append(post.__dict__)
 

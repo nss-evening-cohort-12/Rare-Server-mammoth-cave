@@ -7,3 +7,4 @@ class Post():
     self.subject = subject
     self.content = content
     self.user = None
+    self.category = None

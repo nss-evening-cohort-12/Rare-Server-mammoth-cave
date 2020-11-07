@@ -4,6 +4,7 @@ import sqlite3
 
 def login_check(creds):
     with sqlite3.connect("./mammoth_cave.db") as conn:
+        conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
     
         db_cursor.execute("""
@@ -20,7 +21,9 @@ def login_check(creds):
         dataset = db_cursor.fetchone()
 
         if dataset:
-            return json.dumps({"valid": True, "token": creds['username']})
+            retval = json.dumps({"valid": True, "token": dataset['id']})
+            return retval
+            # return json.dumps({"valid": True, "token": dataset['id']})
         else:
             return json.dumps({})
 
