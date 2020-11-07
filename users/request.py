@@ -53,3 +53,31 @@ def add_user(creds):
             """, (creds['first_name'], creds['last_name'], creds['username'], creds['password'], ))
 
             return json.dumps({"valid": True, "token": creds['username']})
+
+
+def get_all_users():
+    with sqlite3.connect("./mammoth_cave.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+    
+        db_cursor.execute("""
+        select 
+            u.id,
+            u.first_name fname,
+            u.last_name lname,
+            u.email,
+            u.password,
+            u.activated
+        from users u
+        """)
+
+        users = []
+
+        dataset = db_cursor.fetchall()
+
+        for row in dataset:
+            user = User(row['id'], row['fname'], row['lname'], row['email'], row['password'])
+
+            users.append(user.__dict__)
+        
+        return json.dumps(users)
