@@ -66,14 +66,12 @@ class HandleRequests(BaseHTTPRequestHandler):
             # new_post = None
             # new_post = create_post(post_body)
             # self.wfile.write(f"{new_post}".encode())
-            response = create_post(post_body)        
+            response = create_post(post_body)
+            self.wfile.write(f"{response}".encode())
         elif resource == "categories":
             new_category = None
             new_category = create_category(post_body)
             self.wfile.write(f"{new_category}".encode())
-
-        self.wfile.write(f"{response}".encode())
-
 
     def do_DELETE(self):
         self._set_headers(204)
@@ -134,12 +132,12 @@ class HandleRequests(BaseHTTPRequestHandler):
 
             return (resource, id)   
 
-def do_OPTIONS(self):
-    self.send_response(200)
-    self.send_header('Access-Control-Allow-Origin', '*')
-    self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
-    self.send_header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept')
-    self.end_headers()
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type')
+        self.end_headers()
  
 
 def main():

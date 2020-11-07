@@ -1,9 +1,7 @@
-<<<<<<< HEAD
 SELECT 
 		c.id,
 		c.name
 FROM categories  c
-=======
 CREATE TABLE users (
   id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   first_name INTEGER NOT NULL,
@@ -75,4 +73,9 @@ INSERT INTO comments VALUES (null, 2, 2, 11022020, 'Comment Subject 2', 'Comment
 
 
 DROP TABLE posts
->>>>>>> main
+
+select * from users
+
+UPDATE users
+SET email = 'test2@test.com'
+WHERE id = 2
