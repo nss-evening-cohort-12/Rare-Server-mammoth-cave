@@ -3,6 +3,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from posts import get_all_posts, get_post_by_id, get_posts_by_user, create_post, delete_post, update_post
 from users import login_check, add_user, get_all_users
 from categories import get_all_categories, get_single_category, create_category, delete_category, update_category
+from comments import get_comments_by_post_id, create_comment, delete_comment
 
 class HandleRequests(BaseHTTPRequestHandler):
     def _set_headers(self, status):
@@ -42,6 +43,9 @@ class HandleRequests(BaseHTTPRequestHandler):
             if key == "user_id" and resource == "posts":
                 print("i made it")
                 response = get_posts_by_user(value)
+            elif key == "post_id" and resource == "comments":
+                print("comments by post_id")
+                response = get_comments_by_post_id(value)
 
         self.wfile.write(response.encode())
 
@@ -66,13 +70,17 @@ class HandleRequests(BaseHTTPRequestHandler):
             # new_post = None
             # new_post = create_post(post_body)
             # self.wfile.write(f"{new_post}".encode())
-            response = create_post(post_body)        
+            response = create_post(post_body) 
+            self.wfile.write(f"{response}".encode())       
         elif resource == "categories":
             new_category = None
             new_category = create_category(post_body)
             self.wfile.write(f"{new_category}".encode())
+        elif resource == "comments":
+            response = create_comment(post_body)
+            self.wfile.write(f"{response}".encode())
 
-        self.wfile.write(f"{response}".encode())
+        
 
 
     def do_DELETE(self):
@@ -84,6 +92,8 @@ class HandleRequests(BaseHTTPRequestHandler):
                 delete_post(id)
         elif resource == 'categories':
                 delete_category(id)
+        elif resource == "comments":
+            delete_comment(id)
 
         self.wfile.write("".encode())
 
