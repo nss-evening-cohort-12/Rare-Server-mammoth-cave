@@ -7,3 +7,4 @@ class Comment:
     self.creation_date = creation_date
     self.subject = subject
     self.content = content
+    self.user = {}

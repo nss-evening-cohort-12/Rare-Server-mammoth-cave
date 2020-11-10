@@ -43,7 +43,6 @@ class HandleRequests(BaseHTTPRequestHandler):
             if key == "user_id" and resource == "posts":
                 response = get_posts_by_user(value)
             elif key == "post_id" and resource == "comments":
-                print("comments by post_id")
                 response = get_comments_by_post_id(value)
 
         self.wfile.write(response.encode())
