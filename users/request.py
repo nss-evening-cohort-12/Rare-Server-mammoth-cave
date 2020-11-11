@@ -55,7 +55,10 @@ def add_user(creds):
                 ( null, ?, ?, ?, ?, 1);
             """, (creds['first_name'], creds['last_name'], creds['username'], creds['password'], ))
 
-            return json.dumps({"valid": True, "token": creds['username']})
+            id = db_cursor.lastrowid
+
+
+            return json.dumps({"valid": True, "token": id})
 
 
 def get_all_users():
