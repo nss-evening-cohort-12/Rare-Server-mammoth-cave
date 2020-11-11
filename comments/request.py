@@ -21,7 +21,7 @@ def get_comments_by_post_id(post_id):
             join users u
             on c.user_id = u.id
             where c.post_id = ?
-            ORDER BY creation_date
+            ORDER BY creation_date DESC
           """, (int(post_id), ))
 
         comments = []
@@ -42,7 +42,7 @@ def create_comment(body):
             (user_id, post_id, creation_date, subject, content)
         VALUES
             (?,?,?,?,?)
-        """, (body['user_id'], body['post_id'], body['creation_date'], body['subject'], body['content']))
+        """, (int(body['user_id']), int(body['post_id']), body['creation_date'], body['subject'], body['content']))
 
         id = db_cursor.lastrowid
 
