@@ -3,7 +3,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from posts import get_all_posts, get_post_by_id, get_posts_by_user, create_post, delete_post, update_post, get_post_by_category
 from users import login_check, add_user, get_all_users
 from categories import get_all_categories, get_single_category, create_category, delete_category, update_category
-from comments import get_comments_by_post_id, create_comment, delete_comment
+from comments import get_comments_by_post_id, create_comment, delete_comment, update_comment
 
 class HandleRequests(BaseHTTPRequestHandler):
     def _set_headers(self, status):
@@ -104,6 +104,8 @@ class HandleRequests(BaseHTTPRequestHandler):
             success = update_post(id, post_body)
         elif resource == "categories":
             success = update_category(id, post_body)
+        elif resource == "comments":
+            success = update_comment(id, post_body)
         if success:
             self._set_headers(204)
         else:
