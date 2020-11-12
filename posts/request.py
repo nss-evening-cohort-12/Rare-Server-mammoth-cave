@@ -181,7 +181,7 @@ def update_post(id, new_post):
         # Forces 204 response by main module
         return True
 
-def get_post_by_category(category_id):
+def get_posts_by_category(category_id):
     with sqlite3.connect("./mammoth_cave.db") as conn:
         conn.row_factory = sqlite3.Row
 
@@ -208,16 +208,20 @@ def get_post_by_category(category_id):
         JOIN categories c
             ON c.id = p.category_id
         WHERE p.category_id = ?
-        """, ( category_id, ))
+        """, ( int(category_id), ))
 
-        data = db_cursor.fetchone()
+        posts = []
+        dataset = db_cursor.fetchall()
 
-        post = Post(data['id'], data['user_id'], data['creation_date'], data['category_id'], data['subject'], data['content'])
-        user = User(data['user_id'], data['first_name'], data['last_name'], data['email'], data['password'])
-        category = Category(data['category_id'], data['name'])
+        for row in dataset:
+            post = Post(row['id'], row['user_id'], row['creation_date'], row['category_id'], row['subject'], row['content'])
+            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['password'])
+            category = Category(row['category_id'], row['name'])
 
-        post.user = user.__dict__
+            post.user = user.__dict__
 
-        post.category = category.__dict__
+            post.category = category.__dict__
 
-        return json.dumps(post.__dict__)
+            posts.append(post.__dict__)
+
+        return json.dumps(posts)
