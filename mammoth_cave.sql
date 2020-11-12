@@ -34,8 +34,8 @@ CREATE TABLE posts (
   content TEXT NOT NULL
 );
 
-INSERT INTO posts VALUES (null, 1, 11022020, 1, 'Subject Text', 'Content Text')
-INSERT INTO posts VALUES (null, 2, 11022020, 2, 'Subject Text 2', 'Content Text 2')
+INSERT INTO posts VALUES (null, 1, 11022020, 1, 'Subject Text', 'Content Text');
+INSERT INTO posts VALUES (null, 2, 11022020, 2, 'Subject Text 2', 'Content Text 2');
 
 SELECT
   p.id,
@@ -77,5 +77,5 @@ DROP TABLE posts
 select * from users
 
 UPDATE users
-SET email = 'test2@test.com'
-WHERE id = 2
+SET last_name = 'Goodman'
+WHERE id = 4
