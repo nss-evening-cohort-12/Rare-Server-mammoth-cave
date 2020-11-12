@@ -56,3 +56,22 @@ def delete_comment(id):
         DELETE FROM comments
         WHERE id = ?
         """, (id, ))
+
+def update_comment(id, new_post):
+    with sqlite3.connect("./mammoth_cave.db") as conn:
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        UPDATE comments
+            SET
+                subject = ?,
+                content = ?
+            where id = ?
+        """, (new_post['subject'], new_post['content'], id, ))
+
+        rows_affected = db_cursor.rowcount
+        if rows_affected == 0:
+            # Forces 404 response by main module
+            return False
+        else:
+            # Forces 204 response by main module
+            return True
