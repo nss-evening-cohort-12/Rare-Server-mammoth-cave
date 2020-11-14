@@ -50,10 +50,10 @@ def add_user(creds):
         else:
             db_cursor.execute("""
             INSERT INTO users
-                ( id, first_name, last_name, email, password, activated )
+                ( id, first_name, last_name, email, password, activated, bio )
             VALUES
-                ( null, ?, ?, ?, ?, 1);
-            """, (creds['first_name'], creds['last_name'], creds['username'], creds['password'], ))
+                ( null, ?, ?, ?, ?, 1, ?);
+            """, (creds['first_name'], creds['last_name'], creds['username'], creds['password'], creds['bio'] ))
 
             id = db_cursor.lastrowid
 
@@ -73,7 +73,8 @@ def get_all_users():
             u.last_name lname,
             u.email,
             u.password,
-            u.activated
+            u.activated,
+            u.bio
         from users u
         """)
 
@@ -82,8 +83,35 @@ def get_all_users():
         dataset = db_cursor.fetchall()
 
         for row in dataset:
-            user = User(row['id'], row['fname'], row['lname'], row['email'], row['password'])
+            user = User(row['id'], row['fname'], row['lname'], row['email'], row['password'],row['bio'])
 
             users.append(user.__dict__)
         
         return json.dumps(users)
+
+
+def get_single_user(id):
+    with sqlite3.connect("./mammoth_cave.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+    
+        db_cursor.execute("""
+        select 
+            u.id,
+            u.first_name fname,
+            u.last_name lname,
+            u.email,
+            u.password,
+            u.activated,
+            u.bio
+        from users u
+        where u.id = ?
+        """, (int(id), ))
+
+
+        row = db_cursor.fetchone()
+
+        user = User(row['id'], row['fname'], row['lname'], row['email'], row['password'], row['bio'])
+
+        
+        return json.dumps(user.__dict__)

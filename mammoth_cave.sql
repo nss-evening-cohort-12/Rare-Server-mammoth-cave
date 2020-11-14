@@ -2,13 +2,15 @@ SELECT
 		c.id,
 		c.name
 FROM categories  c
+
 CREATE TABLE users (
   id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   first_name INTEGER NOT NULL,
   last_name INTEGER NOT NULL,
   email TEXT NOT NULL,
   password TEXT NOT NULL,
-  activated TINYINT DEFAULT 1
+  activated TINYINT DEFAULT 1,
+  bio TEXT NOT NULL
 );
 
 INSERT INTO users VALUES (null, 'Jeff', 'Bridges', 'test1@test.com', 'password', 1)
@@ -72,7 +74,7 @@ INSERT INTO comments VALUES (null, 2, 2, 11022020, 'Comment Subject 2', 'Comment
 
 
 
-DROP TABLE posts
+DROP TABLE USERS
 
 select * from users
 
