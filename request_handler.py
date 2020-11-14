@@ -105,6 +105,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         elif resource == "categories":
             success = update_category(id, post_body)
         elif resource == "comments":
+            print("put statement")
             success = update_comment(id, post_body)
         if success:
             self._set_headers(204)
