@@ -20,6 +20,7 @@ def get_all_posts():
             u.last_name,
             u.email,
             u.password,
+            u.bio,
             c.id,
             c.name
         FROM posts p
@@ -37,7 +38,7 @@ def get_all_posts():
         for row in dataset:
 
             post = Post(row['id'], row['user_id'], row['creation_date'], row['category_id'], row['subject'], row['content'])
-            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['password'])
+            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['password'], row['bio'])
             category = Category(row['category_id'], row['name'])
 
             post.user = user.__dict__
@@ -67,6 +68,7 @@ def get_post_by_id(id):
             u.last_name,
             u.email,
             u.password,
+            u.bio,
             c.id,
             c.name
         FROM posts p
@@ -80,7 +82,7 @@ def get_post_by_id(id):
         data = db_cursor.fetchone()
 
         post = Post(data['id'], data['user_id'], data['creation_date'], data['category_id'], data['subject'], data['content'])
-        user = User(data['user_id'], data['first_name'], data['last_name'], data['email'], data['password'])
+        user = User(data['user_id'], data['first_name'], data['last_name'], data['email'], data['password'], data['bio'])
         category = Category(data['category_id'], data['name'])
 
         post.user = user.__dict__
@@ -132,6 +134,7 @@ def get_posts_by_user(user_id):
             u.last_name,
             u.email,
             u.password,
+            u.bio,
             c.id,
             c.name
         FROM posts p
@@ -147,7 +150,7 @@ def get_posts_by_user(user_id):
 
         for row in dataset:
             post = Post(row['id'], row['user_id'], row['creation_date'], row['category_id'], row['subject'], row['content'], )
-            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['password'], )
+            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['password'], row['bio'] )
             category = Category(row['category_id'], row['name'])
 
             post.user = user.__dict__
@@ -200,6 +203,7 @@ def get_posts_by_category(category_id):
             u.last_name,
             u.email,
             u.password,
+            u.bio,
             c.id,
             c.name
         FROM posts p
@@ -215,7 +219,7 @@ def get_posts_by_category(category_id):
 
         for row in dataset:
             post = Post(row['id'], row['user_id'], row['creation_date'], row['category_id'], row['subject'], row['content'])
-            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['password'])
+            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['password'], row['bio'])
             category = Category(row['category_id'], row['name'])
 
             post.user = user.__dict__
